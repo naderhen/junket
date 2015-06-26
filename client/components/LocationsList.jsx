@@ -1,29 +1,20 @@
 LocationsList = React.createClass({
-    mixins: [ReactMeteor.Mixin],
-
-    // Make sure your component implements this method.
-    getMeteorState: function() {
-      return {
-        locations: this.getLocations()
-      };
-    },
-
-    getLocations: function() {
-      if (FlowRouter.subsReady('locations')) {
-        console.log('locations ready');
-        return Locations.find().fetch();
-      } else {
-        console.log('locations not ready');
-        return [];
-      }
+    focusLocation: function(location) {
+      Session.set("focus_location", location)
     },
 
     renderLocation: function(location) {
+      var className = "map marker icon";
+
+      if (this.props.focus && this.props.focus._id == location._id) {
+        className += " blue";
+      }
+
       return (
         <div className="item">
-          <i className="map marker icon"></i>
+          <i className={className}></i>
           <div className="content">
-            <a className="header">{location.name}</a>
+            <a onClick={this.focusLocation.bind(this, location)} className="header">{location.map_index}: {location.name}</a>
             <div className="description">{location.formatted_address}</div>
           </div>
         </div>
@@ -32,7 +23,7 @@ LocationsList = React.createClass({
 
     render: function() {
 
-      if (!this.state.locations.length) {
+      if (!this.props.locations.length) {
         return (
           <div className="ui divided list">
             <div className="item">
@@ -49,7 +40,7 @@ LocationsList = React.createClass({
       return (
         <div>
           <div className="ui divided list">
-            {this.state.locations.map(this.renderLocation)}
+            {this.props.locations.map(this.renderLocation)}
           </div>
         </div>
       )

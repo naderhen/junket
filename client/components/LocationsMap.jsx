@@ -1,20 +1,4 @@
 LocationsMap = React.createClass({
-    mixins: [ReactMeteor.Mixin],
-
-    // Make sure your component implements this method.
-    getMeteorState: function() {
-      return {
-        locations: this.getLocations()
-      };
-    },
-
-    getLocations: function() {
-      if (FlowRouter.subsReady('locations')) {
-        return Locations.find().fetch();
-      } else {
-        return [];
-      }
-    },
 
     componentDidMount: function() {
         var self = this,
@@ -26,13 +10,14 @@ LocationsMap = React.createClass({
     },
 
     componentDidUpdate: function() {
-        var self = this;
+        var self = this,
+          focused_layer;
 
         _.each(self.state.markerLayer._layers, function(layer) {
             self.state.markerLayer.removeLayer(layer);
         })
 
-        _.each(self.state.locations, function(location) {
+        _.each(self.props.locations, function(location) {
             var location_layer = L.mapbox.featureLayer({
                 // this feature is in the GeoJSON format: see geojson.org
                 // for the full specification
@@ -48,17 +33,24 @@ LocationsMap = React.createClass({
                 },
                 properties: {
                     title: location.name,
-                    description: '1718 14th St NW, Washington, DC',
-                    'marker-size': 'large',
-                    'marker-color': location.symbol_color,
-                    'marker-symbol': location.marker_symbol
+                    description: location.formatted_address,
+                    'marker-size': 'medium',
+                    'marker-color': location.marker_color,
+                    'marker-symbol': location.map_index
                 }
             })
 
             location_layer.addTo(self.state.markerLayer);
+
+            if (self.props.focus && self.props.focus._id == location._id) {
+              focused_layer = location_layer;
+            }
         })
-        
-        if (self.state.locations.length) {
+
+        if (focused_layer) {
+          self.state.map.fitBounds(focused_layer.getBounds())
+          self.state.map.setZoom(7)
+        } else if (self.props.locations.length) {
           self.state.map.fitBounds(self.state.markerLayer.getBounds());
         }
     },

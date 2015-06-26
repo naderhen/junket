@@ -9,6 +9,7 @@ autopublish
 insecure
 reactjs:react
 msavin:mongol
+msavin:jetsetter
 pauloborges:mapbox@2.1.4_3
 meteorhacks:flow-router
 semantic:ui

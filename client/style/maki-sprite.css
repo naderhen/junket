@@ -8,7 +8,7 @@
   text-indent:-9999px;
   }
 
-.dark .maki-icon { background-image: url(images/maki-sprite.dark.png); }
+.dark.maki-icon { background-image: url(images/maki-sprite.dark.png); }
 
 .title-box .maki-icon.full {
   width: 54px;
