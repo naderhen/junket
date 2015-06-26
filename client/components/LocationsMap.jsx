@@ -48,8 +48,7 @@ LocationsMap = React.createClass({
         })
 
         if (focused_layer) {
-          self.state.map.fitBounds(focused_layer.getBounds())
-          self.state.map.setZoom(7)
+          self.state.map.panTo(focused_layer.getBounds()._southWest)
         } else if (self.props.locations.length) {
           self.state.map.fitBounds(self.state.markerLayer.getBounds());
         }
