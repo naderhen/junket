@@ -9,8 +9,10 @@ App = React.createClass({
             <i className="home icon"></i> Home
           </a>
         </div>
-        <div className="ui segment">
-          {this.props.children}
+        <div className="ui two column centered grid">
+          <div className="column">
+            {this.props.children}
+          </div>
         </div>
       </div>
     )

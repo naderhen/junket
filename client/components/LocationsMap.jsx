@@ -18,32 +18,34 @@ LocationsMap = React.createClass({
         })
 
         _.each(self.props.locations, function(location) {
-            var location_layer = L.mapbox.featureLayer({
-                // this feature is in the GeoJSON format: see geojson.org
-                // for the full specification
-                type: 'Feature',
-                geometry: {
-                    type: 'Point',
-                    // coordinates here are in longitude, latitude order because
-                    // x, y is the standard for GeoJSON and many formats
-                    coordinates: [
-                      location.geometry.location.F,
-                      location.geometry.location.A 
-                    ]
-                },
-                properties: {
-                    title: location.name,
-                    description: location.formatted_address,
-                    'marker-size': 'medium',
-                    'marker-color': location.marker_color,
-                    'marker-symbol': location.map_index
+            if (location.geometry) {
+                var location_layer = L.mapbox.featureLayer({
+                    // this feature is in the GeoJSON format: see geojson.org
+                    // for the full specification
+                    type: 'Feature',
+                    geometry: {
+                        type: 'Point',
+                        // coordinates here are in longitude, latitude order because
+                        // x, y is the standard for GeoJSON and many formats
+                        coordinates: [
+                          location.geometry.location.F,
+                          location.geometry.location.A 
+                        ]
+                    },
+                    properties: {
+                        title: location.name,
+                        description: location.formatted_address,
+                        'marker-size': 'medium',
+                        'marker-color': location.marker_color,
+                        'marker-symbol': location.map_index
+                    }
+                })
+
+                location_layer.addTo(self.state.markerLayer);
+
+                if (self.props.focus && self.props.focus._id == location._id) {
+                  focused_layer = location_layer;
                 }
-            })
-
-            location_layer.addTo(self.state.markerLayer);
-
-            if (self.props.focus && self.props.focus._id == location._id) {
-              focused_layer = location_layer;
             }
         })
 
@@ -51,12 +53,19 @@ LocationsMap = React.createClass({
           self.state.map.panTo(focused_layer.getBounds()._southWest)
         } else if (self.props.locations.length) {
           self.state.map.fitBounds(self.state.markerLayer.getBounds());
+          self.state.map.setZoom(self.props.zoom || 10)
         }
     },
 
     render: function() {
-      return (
-        <div className="map-container" ref="mapContainer"></div>
-      )
+        var style = {};
+
+        if (this.props.height) {
+            style.height = this.props.height + "px";
+        }
+
+        return (
+            <div style={style} className="map-container" ref="mapContainer"></div>
+        )
     }
 });
