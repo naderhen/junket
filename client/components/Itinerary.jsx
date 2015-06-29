@@ -10,7 +10,10 @@ Itinerary = React.createClass({
 
   getEvents: function() {
     if (FlowRouter.subsReady('events')) {
-      return Events.find().fetch();
+      return _.map(Events.find().fetch(), function(event) {
+        event.date = moment(event.date);
+        return event;
+      });
     } else {
       return [];
     }
@@ -36,7 +39,16 @@ Itinerary = React.createClass({
           return (
             <div className="ui tall stacked segment grid">
               <div className="three column row">
-                <div className="two wide column">test</div>
+                <div className="two wide column">
+                  <div className="ui statistic">
+                    <div className="value">
+                      {event.date.format("DD")}
+                    </div>
+                    <div className="label">
+                      {event.date.format("MMM").toUpperCase()}
+                    </div>
+                  </div>
+                </div>
                 <div className="ten wide column">
                   <h3 onClick={self.selectEvent.bind(self, event)}>{event.name} <span>{event.date}</span></h3>
                   <p>{event.description}</p>
