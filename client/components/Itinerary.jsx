@@ -11,7 +11,8 @@ Itinerary = React.createClass({
   getEvents: function() {
     if (FlowRouter.subsReady('events')) {
       return _.map(Events.find().fetch(), function(event) {
-        event.date = moment(event.date);
+        event.start_date = moment(event.start_date);
+        event.end_date = moment(event.end_date);
         return event;
       });
     } else {
@@ -32,25 +33,27 @@ Itinerary = React.createClass({
         </div>
       )
     }
+    
+    var events = _.sortBy(this.state.events, 'start_date');
 
     return (
       <div className="ui segment">
-        {this.state.events.map(function(event) {
+        {events.map(function(event) {
           return (
-            <div className="ui tall stacked segment grid">
+            <div key={event._id} className="ui tall stacked segment grid">
               <div className="three column row">
                 <div className="two wide column">
                   <div className="ui statistic">
                     <div className="value">
-                      {event.date.format("DD")}
+                      {event.start_date.format("DD")}
                     </div>
                     <div className="label">
-                      {event.date.format("MMM").toUpperCase()}
+                      {event.start_date.format("MMM").toUpperCase()}
                     </div>
                   </div>
                 </div>
                 <div className="ten wide column">
-                  <h3 onClick={self.selectEvent.bind(self, event)}>{event.name} <span>{event.date}</span></h3>
+                  <h3 onClick={self.selectEvent.bind(self, event)}>{event.name}</h3>
                   <p>{event.description}</p>
                 </div>
                 <div className="four wide column">
@@ -76,6 +79,9 @@ Itinerary = React.createClass({
   },
 
   submitEvent: function(model, id) {
+    model.start_date = moment(model.start_date)._i;
+    model.end_date = moment(model.end_date)._i;
+
     if (id) {
       Events.update(id, {$set: model});
     } else {

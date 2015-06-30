@@ -10,7 +10,7 @@ App = React.createClass({
           </a>
         </div>
         <div className="ui two column centered grid">
-          <div className="column">
+          <div className="twelve wide column">
             {this.props.children}
           </div>
         </div>
